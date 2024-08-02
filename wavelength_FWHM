@@ -1,0 +1,115 @@
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.signal import find_peaks, peak_widths
+
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from scipy.signal import find_peaks, peak_widths
+
+# File path and name
+file_path = '/Users/muntasirmahmud/Library/CloudStorage/OneDrive-UMBC/4. SciGlob/Pandora_2_L0/Pandora2s1_GreenbeltMD_20240725_L1_smca1c9d20220412p1-8.txt'
+
+base_name = os.path.basename(file_path)
+csv_file_name = os.path.splitext(base_name)[0] + '.csv'
+
+# Read the entire file
+with open(file_path, 'r', encoding='latin1') as file:
+    lines = file.readlines()
+
+# Extract the line containing the nominal wavelengths
+nominal_wavelengths_line = lines[22].strip()  # Line 23 in the file (index 22)
+
+# Split the line into individual wavelengths and convert them to float
+wavelength = np.array([float(value) for value in nominal_wavelengths_line.split(': ')[1].split()])
+
+# Skip the initial 89 rows
+data_lines = lines[89:]
+
+# Process each line to split into rows and columns
+data_list = []
+for line in data_lines:
+    # Strip the newline character and split by tabs
+    rows = line.strip().split('\t')
+    for row in rows:
+        # Split each row by spaces
+        columns = row.split()
+        data_list.append(columns)
+
+# Convert the list of lists into a DataFrame
+data1 = pd.DataFrame(data_list)
+
+# Convert the necessary columns to numeric before saving
+data1.iloc[:, 2:6205] = data1.iloc[:, 2:6205].apply(pd.to_numeric, errors='coerce')
+
+# Define the conditions
+conditions = {
+    "SQ_0d_1_4": (data1[0] == "SQ") & (data1[11] == 1) & (data1[12] == 4),
+    "SQ_0d_1_3": (data1[0] == "SQ") & (data1[11] == 1) & (data1[12] == 3)
+}
+
+# Create variables for filtered data
+filtered_data = {key: data1.loc[condition, 58:2108] for key, condition in conditions.items()}
+
+# Extract the data and calculate the mean
+SQ_0d_1_4 = filtered_data["SQ_0d_1_4"].reset_index(drop=True)
+SQ_0d_1_3 = filtered_data["SQ_0d_1_3"].reset_index(drop=True)
+
+SQ_1_4_mean = SQ_0d_1_4.iloc[:, 3:].mean()
+SQ_1_3_mean = SQ_0d_1_3.iloc[:, 3:].mean()
+
+# Find peaks (inverted for dips)
+inverted_data = -SQ_1_4_mean
+
+# Adjust prominence, width, and distance
+prominence_threshold = 0.5  # Increase to capture sharper dips
+min_width = 2  # Minimum number of points that the dip should span
+min_distance = 5  # Minimum number of points between dips
+
+# Find peaks with adjusted parameters
+peaks, properties = find_peaks(
+    inverted_data, 
+    prominence=prominence_threshold, 
+    width=min_width, 
+    distance=min_distance
+)
+
+# Calculate FWHM
+results_half = peak_widths(inverted_data, peaks, rel_height=0.5)
+
+# Extract FWHM and wavelengths of dips
+dip_wavelengths = wavelength[peaks]
+dip_fwhm = results_half[0] * (wavelength[1] - wavelength[0])  # FWHM in wavelength units
+
+# Plot
+plt.figure(figsize=(20, 10))
+plt.plot(wavelength, SQ_1_4_mean, label='SQ', color='black')
+plt.plot(wavelength, SQ_1_3_mean, label='SQ Opaque', color='red')
+
+# Mark dips and annotate with FWHM
+for i, peak in enumerate(peaks):
+    plt.plot(wavelength[peak], SQ_1_4_mean.iloc[peak], 'go')  # Mark the dip
+    plt.annotate(f'', (wavelength[peak], SQ_1_4_mean.iloc[peak]), 
+                 textcoords="offset points", xytext=(0,10), ha='center', fontsize=10, color='green')
+
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=14)
+plt.grid(True)
+plt.xlabel('Wavelength (nm)')
+plt.ylabel('Irradiance [W/m2/nm]')
+plt.xlim(277, 543)
+plt.legend(fontsize=16)
+plt.title('SQ', fontsize=14)
+plt.show()
+
+# Store dip wavelengths and FWHM in a DataFrame
+dips_df = pd.DataFrame({'Wavelength (nm)': dip_wavelengths, 'FWHM (nm)': dip_fwhm})
+
+# Display the results
+print(dips_df)
+print("Minimum FWHM wavelength:", dip_fwhm.min(), "(nm)")
+print("Average FWHM wavelength:", dip_fwhm.mean(), "(nm)")
+print("Maximum FWHM wavelength:", dip_fwhm.max(), "(nm)")
