@@ -4,12 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks, peak_widths
 
-import os
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from scipy.signal import find_peaks, peak_widths
-
 # File path and name
 file_path = '/Users/muntasirmahmud/Library/CloudStorage/OneDrive-UMBC/4. SciGlob/Pandora_2_L0/Pandora2s1_GreenbeltMD_20240725_L1_smca1c9d20220412p1-8.txt'
 
