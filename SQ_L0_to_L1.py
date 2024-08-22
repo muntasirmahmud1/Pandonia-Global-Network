@@ -32,8 +32,8 @@ def normalize(data):
 
 # Plotting the normalized values of one row of L1 calculated and L1 together
 plt.figure(figsize=(20, 10))
-plt.plot(normalize(L1_calculated.iloc[row_to_plot, :]), label='L0 Normalized')
-plt.plot(normalize(L1.iloc[row_to_plot, :]), label='L1 Normalized')
+plt.plot(normalize(L1_calculated.iloc[row_to_plot, :]), label='SQ calculated from L0')
+plt.plot(normalize(L1.iloc[row_to_plot, :]), label='SQ from L1')
 plt.xlabel('Pixel')
 plt.ylabel('Normalized Value')
 plt.title('Normalized Comparison of L1 calculated and actual L1')
