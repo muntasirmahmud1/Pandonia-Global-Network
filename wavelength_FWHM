@@ -20,7 +20,7 @@ nominal_wavelengths_line = lines[22].strip()  # Line 23 in the file (index 22)
 # Split the line into individual wavelengths and convert them to float
 wavelength = np.array([float(value) for value in nominal_wavelengths_line.split(': ')[1].split()])
 
-# Skip the initial 89 rows
+# Skip the initial 89 rows meta data
 data_lines = lines[89:]
 
 # Process each line to split into rows and columns
