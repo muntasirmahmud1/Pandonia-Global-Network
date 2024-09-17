@@ -16,12 +16,12 @@ L1_raw = data.iloc[7:12, :]
 L0_ = L0_raw.iloc[:, 5:2053]  # Extract the raw counts for each pixel
 L0_blind = L0_raw.iloc[:, 2054:2057].mean(axis=1).values.reshape(-1, 1)  # Mean of last three blind pixels
 L0_blind_corrected = L0_ - L0_blind  # Subtract the mean blind pixels
-L0_scaled = L0_blind_corrected.divide(L0_raw.iloc[:, 4], axis=0)  # divide by column 5 (Scale factor for data)
-L1_calculated = L0_scaled.iloc[:-1, :] - L0_scaled.iloc[-1, :]  # Subtract row 6 (Dark measurement) from rows 1 to 5
+L0_scaled = L0_blind_corrected.divide(L0_raw.iloc[:, 4], axis=0)  # divide by the column = Scale factor for data
+L1_calculated = L0_scaled.iloc[:-1, :] - L0_scaled.iloc[-1, :]  # Subtract Dark measurement
 
 # L1 from PGN
 L1_ = L1_raw.iloc[:, 5:2053]  # Extract columns 6 to 2053
-L1 = L1_.divide(L1_raw.iloc[:, 4], axis=0)  # divide by column 5 (Scale factor for data)
+L1 = L1_.divide(L1_raw.iloc[:, 4], axis=0)  # divide by the column = Scale factor for data
 
 # Select the row to plot
 row_to_plot = 0  # Change this value to plot a different row
