@@ -14,7 +14,7 @@ with open(file_path, 'r', encoding='latin1') as file:
 nominal_wavelengths_line = lines[22].strip()  # Line 23 in the file (index 22)
 
 # Split the line into individual wavelengths and convert them to float
-x = [float(value) for value in nominal_wavelengths_line.split(': ')[1].split()]
+wavelength = [float(value) for value in nominal_wavelengths_line.split(': ')[1].split()]
 
 # Skip the initial 89 rows
 data_lines = lines[89:]
