@@ -28,7 +28,6 @@ data1 = pd.DataFrame(data_list)
 # Convert the necessary columns to numeric before saving
 data1.iloc[:, 2:4128] = data1.iloc[:, 2:4128].apply(pd.to_numeric, errors='coerce')
 
-
 # Define the column names
 column_names = [
     'routine', 'time (yyyymmddThhmmssZ)', 'Routine count', 'Repetition count', 'measurement duration (s)',
