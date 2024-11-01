@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # File path
-file_path = '/Users/muntasirmahmud/Library/CloudStorage/OneDrive-UMBC/4. SciGlob/Pandora_2_L0/Pandora2_L0_L1_SQ_20240815.xlsx'
+file_path = 'Pandora2_L0_L1_SQ_20240815.xlsx'
 
 # Load the data
 data = pd.read_excel(file_path, header=None)
