@@ -65,7 +65,7 @@ for line in data_lines:
         corrected_counts = dark_counts + np.clip(np.dot(correction_matrix, (raw_counts - dark_counts)), 0, None)
         
         # Format the corrected values to 2 decimal points.
-        corrected_counts_str = [f"{val:.2f}" for val in corrected_counts]
+        corrected_counts_str = [f"{val:.0f}" for val in corrected_counts]
         
         # Rebuild the line: keep columns 1-24 and any columns after 2072 unchanged.
         new_parts = parts[:24] + corrected_counts_str + parts[2072:]
