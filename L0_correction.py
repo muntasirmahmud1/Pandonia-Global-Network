@@ -5,7 +5,7 @@ import os
 correction_matrix = np.loadtxt("P180_corr_mat_CC_Comb_ib15.csv", delimiter=",")
 
 # Input file path
-input_file = "/Users/muntasirmahmud/Library/CloudStorage/OneDrive-UMBC/4. SciGlob/Panndora_456/Lab_pandora/Feb_21_2025_P180/Pandora180s1_GreenbeltMD_20250115_L0.txt"
+input_file = "Pandora180s1_GreenbeltMD_20250115_L0.txt"
 
 # Determine the output file name
 base, ext = os.path.splitext(input_file)
