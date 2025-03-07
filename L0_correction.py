@@ -60,7 +60,7 @@ for line in data_lines:
             continue
         
         # Subtract dark counts from raw counts, apply the correction matrix,
-        # then add the dark counts back:
+        # Then add the dark counts back:
         #   final_counts = dark_counts + correction_matrix * (raw_counts - dark_counts)
         corrected_counts = dark_counts + np.clip(np.dot(correction_matrix, (raw_counts - dark_counts)), 0, None)
         
