@@ -19,21 +19,26 @@ with open(input_file, 'r', encoding='latin-1') as f:
 metadata = lines[:44]
 data_lines = lines[44:]
 
+# Counters for dark and raw rows (measurement rows that get corrected)
+dark_count_rows = 0
+raw_count_rows = 0
+
 # Build a dictionary of dark counts from rows where:
 # Column 1 == "SS", Column 9 (filterwheel #1) == "1", and Column 10 (filterwheel #2) == "3".
-# key = routine count from Columns.
+# key = routine count from Column 3.
 dark_dict = {}
 for line in data_lines:
     if not line.strip():
         continue
     parts = line.strip().split()
     if parts[0] == "SS" and parts[8] == "1" and parts[9] == "3":
+        dark_count_rows += 1
         try:
             dark_counts = np.array(parts[24:2072], dtype=float)
         except Exception as e:
             print("Error converting dark counts in line:", line, e)
             continue
-        key = (parts[2])
+        key = parts[2]
         dark_dict[key] = dark_counts
 
 # Process the data lines.
@@ -47,7 +52,8 @@ for line in data_lines:
     
     # Process measurement rows: SS with filterwheel #1 = 1 and filterwheel #2 = 5.
     if parts[0] == "SS" and parts[8] == "1" and parts[9] == "5":
-        key = (parts[2])
+        raw_count_rows += 1
+        key = parts[2]
         # Retrieve the dark counts using the routine key.
         # If no matching dark row is found, we use an array of zeros.
         dark_counts = dark_dict.get(key, np.zeros(2048))
@@ -60,11 +66,10 @@ for line in data_lines:
             continue
         
         # Subtract dark counts from raw counts, apply the correction matrix,
-        # Then add the dark counts back:
-        #   final_counts = dark_counts + correction_matrix * (raw_counts - dark_counts)
+        # then add the dark counts back, clipping the correction term to avoid negatives.
         corrected_counts = dark_counts + np.clip(np.dot(correction_matrix, (raw_counts - dark_counts)), 0, None)
         
-        # Format the corrected values to 2 decimal points.
+        # Format the corrected values as round numbers (no decimals).
         corrected_counts_str = [f"{val:.0f}" for val in corrected_counts]
         
         # Rebuild the line: keep columns 1-24 and any columns after 2072 unchanged.
@@ -81,3 +86,5 @@ with open(output_file, 'w', encoding='latin-1') as f:
     f.writelines(processed_lines)
 
 print("File has been processed and saved as:", output_file)
+print("Total dark counts rows found:", dark_count_rows)
+print("Total bright counts rows found:", raw_count_rows)
