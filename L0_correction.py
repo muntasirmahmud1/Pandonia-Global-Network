@@ -55,7 +55,7 @@ for line in data_lines:
         raw_count_rows += 1
         key = parts[2]
         # Retrieve the dark counts using the routine key.
-        # If no matching dark row is found, we use an array of zeros.
+        # If no matching dark row is found, use an array of zeros.
         dark_counts = dark_dict.get(key, np.zeros(2048))
         
         try:
