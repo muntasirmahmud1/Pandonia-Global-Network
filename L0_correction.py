@@ -50,7 +50,7 @@ for line in data_lines:
 
     parts = line.strip().split()
     
-    # Process measurement rows: SS with filterwheel #1 = 1 and filterwheel #2 = 5.
+    # Process Bright measurement rows: SS with filterwheel #1 = 1 and filterwheel #2 = 5.
     if parts[0] == "SS" and parts[8] == "1" and parts[9] == "5":
         raw_count_rows += 1
         key = parts[2]
